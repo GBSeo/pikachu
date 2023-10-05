@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>따라큐를 없애라!</title>
+    <style type="text/css">
+        .flower {
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: left 1s ease-in-out, transform 2s ease-in-out;
+        }
+        #score {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 36px;
+        }
+    </style>
+</head>
+<body>
+    <audio id="flowerSound" src="flower_sound.mp3"></audio>
+    <div id="score">스코어: 0</div>
+    <script type="text/javascript">
+        var a = ["flower", "flower2", "flower3"];
+        var flower2Count = 0; // flower2 클릭 횟수를 저장할 변수
+
+        for (var i = 0; i < 50; i++) {
+            createFlower();
+        }
+
+        function createFlower() {
+            var t = document.createElement("img");
+            t.src = a[randomBH(0, 2)] + ".png";
+            t.className = "flower";
+            t.style.width = randomBH(20, 100) + "px";
+            t.style.height = "auto";
+            t.style.left = Math.random() * window.innerWidth + "px";
+            t.style.top = Math.random() * window.innerHeight + "px";
+            document.body.appendChild(t);
+
+            // flower2 이미지 클릭 시 서서히 사라지도록 설정
+            if (t.src.includes("flower2")) {
+                t.addEventListener("click", function () {
+                    var opacity = 1;
+                    var interval = setInterval(function () {
+                        opacity -= 0.1; // 투명도를 서서히 줄임
+                        t.style.opacity = opacity;
+                        if (opacity <= 0) {
+                            clearInterval(interval);
+                            t.remove(); // 투명도가 0이 되면 이미지 제거
+                            playFlowerSound(); // 효과음 재생
+                            flower2Count++; // flower2 클릭 횟수 증가
+                            updateScore(); // 스코어 업데이트
+                            if (flower2Count === 2) {
+                                // flower2Count가 7일 때 경고 창 표시
+                                showAlert("정말 따라큐를 없애실건가요?");
+                            } else if (flower2Count === 5) {
+                                // flower2Count가 10일 때 다른 경고 창 표시
+                                showAlert("따라큐가 슬퍼하고 있습니다.");
+                            } else if (flower2Count === 8) {
+                                // flower2Count가 10일 때 다른 경고 창 표시
+                                showAlert("불쌍한 따라큐...");
+                                } else if (flower2Count === 12) {
+                                // flower2Count가 10일 때 다른 경고 창 표시
+                                showAlert("피카츄가 부러웠을 뿐인데...");
+
+                            } else if (flower2Count === 17) {
+                                // flower2Count가 15일 때 다른 경고 창 표시
+                                showAlert("이제 그만!");
+                            } 
+                        }
+                    }, 100);
+                });
+            }
+
+            setInterval(function () {
+                t.style.left = (parseInt(t.style.left) + randomBetween(-20, 20)) + "px";
+                t.style.transform = "rotate(" + randomBetween(-15, 15) + "deg)";
+            }, 1000);
+        }
+
+        function randomBH(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function randomBetween(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function playFlowerSound() {
+            var audio = document.getElementById("flowerSound");
+            audio.play();
+        }
+
+        function showAlert(message) {
+            alert(message);
+        }
+
+        function updateScore() {
+            var scoreElement = document.getElementById("score");
+            scoreElement.textContent = "스코어: " + flower2Count;
+        }
+    </script>
+</body>
+</html>
